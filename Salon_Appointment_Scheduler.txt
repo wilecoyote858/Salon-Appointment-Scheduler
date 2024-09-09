@@ -1,0 +1,51 @@
+---------------------------------------------------------------------
+1.Create Database and connect to it
+---------------------------------------------------------------------
+psql --username=freecodecamp --dbname=postgres;
+
+CREATE DATABASE salon;
+
+\c salon
+
+---------------------------------------------------------------------
+2. Create tables as required conditions
+---------------------------------------------------------------------
+
+CREATE TABLE customers();
+CREATE TABLE appointments();
+CREATE TABLE services();
+
+ALTER TABLE customers ADD COLUMN customer_id SERIAL PRIMARY KEY;
+ALTER TABLE customers ADD COLUMN phone VARCHAR(15) NOT NULL UNIQUE;
+ALTER TABLE customers ADD COLUMN name VARCHAR(50) NOT NULL;
+
+ALTER TABLE services ADD COLUMN service_id SERIAL PRIMARY KEY;
+ALTER TABLE services ADD COLUMN name VARCHAR(50) NOT NULL;
+
+ALTER TABLE appointments ADD COLUMN appointment_id SERIAL PRIMARY KEY;
+ALTER TABLE appointments ADD COLUMN customer_id INT NOT NULL;
+ALTER TABLE appointments ADD COLUMN service_id INT NOT NULL;
+ALTER TABLE appointments ADD COLUMN time VARCHAR(40) NOT NULL;
+  ALTER TABLE appointments ADD FOREIGN KEY(customer_id) REFERENCES customers(customer_id);
+  ALTER TABLE appointments ADD FOREIGN KEY(service_id) REFERENCES services(service_id);
+
++++++
+truncate customers, appointments;
+ALTER TABLE appointments DROP CONSTRAINT appointments_customer_id_fkey1;
+ALTER TABLE appointments DROP CONSTRAINT appointments_customer_id_fkey2;
++++++
+
+INSERT INTO services(name) VALUES ('cut'),('color'),('perm'),('style'),('trim');
+
+------------------------------------------------------------
+3. Build salon.sh
+------------------------------------------------------------
+
+$ touch salon.sh
+$ echo -e '#!/bin/bash' > salon.sh
+$ echo 'echo -e "\n~~~~~ My Salon ~~~~~\n"' >> salon.sh
+$ chmod +x salon.sh
+$ ./salon.sh
+
+PSQL="psql -X --username=freecodecamp --dbname=salon --tuples-only -c"
+pg_dump -cC --inserts -U freecodecamp salon > salon.sql
